@@ -5,11 +5,15 @@ import java.util.Scanner;
 class ContaCorrente {
     private int numero;
     private double saldo;
+    private boolean especial;
+    private double limite;
     private List<Movimentacao> movimentacoes;
 
-    public ContaCorrente(int numero, double saldo) {
+    public ContaCorrente(int numero, double saldo, boolean especial, double limite) {
         this.numero = numero;
         this.saldo = saldo;
+        this.especial = especial;
+        this.limite = limite;
         this.movimentacoes = new ArrayList<>();
     }
 
@@ -23,6 +27,14 @@ class ContaCorrente {
 
     public void setSaldo(double saldo) {
         this.saldo = saldo;
+    }
+
+    public boolean isEspecial() {
+        return especial;
+    }
+
+    public double getLimite() {
+        return limite;
     }
 
     public List<Movimentacao> getMovimentacoes() {
@@ -71,8 +83,8 @@ class Banco {
         return contas;
     }
 
-    public void criarConta(int numero, double saldo) {
-        ContaCorrente conta = new ContaCorrente(numero, saldo);
+    public void criarConta(int numero, double saldo, boolean especial, double limite) {
+        ContaCorrente conta = new ContaCorrente(numero, saldo, especial, limite);
         contas.add(conta);
     }
 
@@ -81,7 +93,8 @@ class Banco {
     }
 
     public void realizarSaque(ContaCorrente conta, double valor) {
-        if (valor <= conta.getSaldo()) {
+        double limiteSaque = conta.getLimite() + conta.getSaldo();
+        if (valor <= limiteSaque) {
             conta.adicionarMovimentacao(new Movimentacao("Saque", valor, false));
             conta.setSaldo(conta.getSaldo() - valor);
             System.out.println("Saque realizado com sucesso.");
@@ -136,7 +149,11 @@ public class Main {
                     int numeroConta = scanner.nextInt();
                     System.out.println("Digite o saldo inicial da conta:");
                     double saldoInicial = scanner.nextDouble();
-                    banco.criarConta(numeroConta, saldoInicial);
+                    System.out.println("A conta é especial? (Digite true para especial ou false para comum):");
+                    boolean especial = scanner.nextBoolean();
+                    System.out.println("Digite o limite da conta:");
+                    double limite = scanner.nextDouble();
+                    banco.criarConta(numeroConta, saldoInicial, especial, limite);
                     System.out.println("Conta criada com sucesso.");
                     break;
                 case 2:
